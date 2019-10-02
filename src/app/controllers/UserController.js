@@ -30,8 +30,9 @@ class UserController {
     }
 
     const user = await User.create(req.body);
-    const { id, name, email, provider } = user;
-    return res.json({ id, name, email, provider });
+    const { id, name, email } = user;
+
+    return res.json({ id, name, email });
   }
 
   async update(req, res) {

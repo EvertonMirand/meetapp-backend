@@ -3,6 +3,7 @@ import { Op } from 'sequelize';
 import { isBefore, startOfDay, endOfDay, parseISO } from 'date-fns';
 import Meetup from '../models/Meetup';
 import User from '../models/User';
+import File from '../models/File';
 
 class MeetupController {
   async index(req, res) {
@@ -19,7 +20,13 @@ class MeetupController {
 
     const meetups = await Meetup.findAll({
       where,
-      include: [User],
+      include: [
+        User,
+        {
+          model: File,
+          attributes: ['id', 'path', 'url'],
+        },
+      ],
       limit: 10,
       offset: 10 * page - 10,
     });
@@ -37,11 +44,15 @@ class MeetupController {
     });
 
     if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ error: 'Validation fails' });
+      return res.status(400).json({
+        error: 'Validation fails',
+      });
     }
 
     if (isBefore(parseISO(req.body.date), new Date())) {
-      return res.status(400).json({ error: 'Meetup date invalid' });
+      return res.status(400).json({
+        error: 'Meetup date invalid',
+      });
     }
 
     const user_id = req.userId;
@@ -64,7 +75,9 @@ class MeetupController {
     });
 
     if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ error: 'Validation fails' });
+      return res.status(400).json({
+        error: 'Validation fails',
+      });
     }
 
     const user_id = req.userId;
@@ -72,20 +85,36 @@ class MeetupController {
     const meetup = await Meetup.findByPk(req.params.id);
 
     if (meetup.user_id !== user_id) {
-      return res.status(401).json({ error: 'Not authorized.' });
+      return res.status(401).json({
+        error: 'Not authorized.',
+      });
     }
 
     if (isBefore(parseISO(req.body.date), new Date())) {
-      return res.status(400).json({ error: 'Meetup date invalid' });
+      return res.status(400).json({
+        error: 'Meetup date invalid',
+      });
     }
 
     if (meetup.past) {
-      return res.status(400).json({ error: "Can't update past meetups." });
+      return res.status(400).json({
+        error: "Can't update past meetups.",
+      });
     }
 
     await meetup.update(req.body);
 
-    return res.json(meetup);
+    const updatedMeetup = await Meetup.findByPk(req.params.id, {
+      include: [
+        User,
+        {
+          model: File,
+          attributes: ['id', 'path', 'url'],
+        },
+      ],
+    });
+
+    return res.json(updatedMeetup);
   }
 
   async delete(req, res) {
@@ -94,11 +123,15 @@ class MeetupController {
     const meetup = await Meetup.findByPk(req.params.id);
 
     if (meetup.user_id !== user_id) {
-      return res.status(401).json({ error: 'Not authorized.' });
+      return res.status(401).json({
+        error: 'Not authorized.',
+      });
     }
 
     if (meetup.past) {
-      return res.status(400).json({ error: "Can't delete past meetups." });
+      return res.status(400).json({
+        error: "Can't delete past meetups.",
+      });
     }
 
     await meetup.destroy();
