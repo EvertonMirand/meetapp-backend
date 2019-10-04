@@ -1,3 +1,4 @@
+import { compareAsc } from 'date-fns';
 import Meetup from '../models/Meetup';
 
 class OrganizingController {
@@ -8,7 +9,7 @@ class OrganizingController {
       },
     });
 
-    return res.json(meetups);
+    return res.json(meetups.sort((a, b) => compareAsc(a.date, b.date)));
   }
 }
 
