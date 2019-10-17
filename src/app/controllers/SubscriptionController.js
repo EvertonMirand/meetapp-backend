@@ -4,6 +4,7 @@ import Meetup from '../models/Meetup';
 import Subscription from '../models/Subscription';
 import Queue from '../../lib/Queue';
 import SubscriptionMail from '../jobs/SubscriptionMail';
+import File from '../models/File';
 
 class SubscriptionController {
   async index(req, res) {
@@ -12,14 +13,10 @@ class SubscriptionController {
         user_id: req.userId,
       },
       include: [
+        User,
         {
-          model: Meetup,
-          where: {
-            date: {
-              [Op.gt]: new Date(),
-            },
-          },
-          required: true,
+          model: File,
+          attributes: ['id', 'path', 'url'],
         },
       ],
       order: [[Meetup, 'date']],
