@@ -31,7 +31,7 @@ class MeetupController {
       offset: 10 * page - 10,
     });
 
-    res.set('x-total-count', count);
+    res.set('x-total-page', Math.ceil(count / 10));
 
     return res.json(meetups);
   }
