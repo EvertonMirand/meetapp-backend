@@ -13,10 +13,21 @@ class SubscriptionController {
         user_id: req.userId,
       },
       include: [
-        User,
         {
-          model: File,
-          attributes: ['id', 'path', 'url'],
+          model: Meetup,
+          include: [
+            User,
+            {
+              model: File,
+              attributes: ['id', 'path', 'url'],
+            },
+          ],
+          where: {
+            date: {
+              [Op.gt]: new Date(),
+            },
+          },
+          required: true,
         },
       ],
       order: [[Meetup, 'date']],
