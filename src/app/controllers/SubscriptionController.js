@@ -8,7 +8,8 @@ import File from '../models/File';
 
 class SubscriptionController {
   async index(req, res) {
-    const subscriptions = await Subscription.findAll({
+    const page = req.query.page || 1;
+    const { rows: subscriptions, count } = await Subscription.findAndCountAll({
       where: {
         user_id: req.userId,
       },
@@ -30,8 +31,12 @@ class SubscriptionController {
           required: true,
         },
       ],
+      limit: 10,
+      offset: 10 * page - 10,
       order: [[Meetup, 'date']],
     });
+
+    res.set('x-total-page', Math.ceil(count / 10));
 
     return res.json(subscriptions);
   }
