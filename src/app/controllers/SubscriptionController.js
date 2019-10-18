@@ -92,6 +92,34 @@ class SubscriptionController {
 
     return res.json(subscription);
   }
+
+  async delete(req, res) {
+    const subscription_id = req.params.id;
+    const user_id = req.userId;
+    const subscription = await Subscription.findByPk(subscription_id, {
+      include: Meetup,
+    });
+
+    const { Meetup: meetup } = subscription;
+
+    if (subscription.user_id !== user_id) {
+      return res.status(401).json({
+        error: 'Not authorized.',
+      });
+    }
+
+    if (meetup.past) {
+      return res.status(400).json({
+        error: "Can't delete subscription of past meetups.",
+      });
+    }
+
+    await subscription.destroy();
+
+    return res.send({
+      message: 'Unsubscribe successfully',
+    });
+  }
 }
 
 export default new SubscriptionController();
