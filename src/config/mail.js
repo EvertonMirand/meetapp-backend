@@ -7,6 +7,6 @@ export default {
     pass: process.env.MAIL_PASS,
   },
   default: {
-    from: 'Diego Fernandes <noreply@meetapp.com>',
+    from: 'Everton Miranda <noreply@meetapp.com>',
   },
 };
