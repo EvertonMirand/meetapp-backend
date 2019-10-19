@@ -20,7 +20,7 @@ class MeetupController {
       };
     }
 
-    const { rows: meetups, count } = await Meetup.findAndCountAll({
+    const { rows, count } = await Meetup.findAndCountAll({
       where,
       include: [
         User,
@@ -55,11 +55,11 @@ class MeetupController {
       };
     };
 
-    const a = await Promise.all(await meetups.map(mapMeetup));
+    const meetups = await Promise.all(await rows.map(mapMeetup));
 
     res.set('x-total-page', Math.ceil(count / 10));
 
-    return res.json(a);
+    return res.json(meetups);
   }
 
   async store(req, res) {
