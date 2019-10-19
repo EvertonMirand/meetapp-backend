@@ -4,11 +4,13 @@ import { isBefore, startOfDay, endOfDay, parseISO } from 'date-fns';
 import Meetup from '../models/Meetup';
 import User from '../models/User';
 import File from '../models/File';
+import Subscription from '../models/Subscription';
 
 class MeetupController {
   async index(req, res) {
     const where = {};
     const page = req.query.page || 1;
+    const user = await User.findByPk(req.userId);
 
     if (req.query.date) {
       const searchDate = parseISO(req.query.date);
@@ -31,9 +33,33 @@ class MeetupController {
       offset: 10 * page - 10,
     });
 
+    const mapMeetup = async meetup => {
+      const checkDate = await Subscription.findOne({
+        where: {
+          user_id: user.id,
+        },
+        include: [
+          {
+            model: Meetup,
+            required: true,
+            where: {
+              date: meetup.date,
+            },
+          },
+        ],
+      });
+
+      return {
+        ...meetup.toJSON(),
+        canSubscribe: !checkDate,
+      };
+    };
+
+    const a = await Promise.all(await meetups.map(mapMeetup));
+
     res.set('x-total-page', Math.ceil(count / 10));
 
-    return res.json(meetups);
+    return res.json(a);
   }
 
   async store(req, res) {
