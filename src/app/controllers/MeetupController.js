@@ -73,13 +73,13 @@ class MeetupController {
 
     if (!(await schema.isValid(req.body))) {
       return res.status(400).json({
-        error: 'Validation fails',
+        error: 'Erro ao validar campos, porfavor verifique novamente.',
       });
     }
 
     if (isBefore(parseISO(req.body.date), new Date())) {
       return res.status(400).json({
-        error: 'Meetup date invalid',
+        error: 'Data do Meetup invalida.',
       });
     }
 
@@ -104,7 +104,7 @@ class MeetupController {
 
     if (!(await schema.isValid(req.body))) {
       return res.status(400).json({
-        error: 'Validation fails',
+        error: 'Erro ao validar campos, porfavor verifique novamente.',
       });
     }
 
@@ -114,19 +114,19 @@ class MeetupController {
 
     if (meetup.user_id !== user_id) {
       return res.status(401).json({
-        error: 'Not authorized.',
+        error: 'Usuario não autorizado para atualizar o meetup.',
       });
     }
 
     if (isBefore(parseISO(req.body.date), new Date())) {
       return res.status(400).json({
-        error: 'Meetup date invalid',
+        error: 'Data do Meetup invalida',
       });
     }
 
     if (meetup.past) {
       return res.status(400).json({
-        error: "Can't update past meetups.",
+        error: 'Não pode atualizar Meetups que já ocorreram',
       });
     }
 
@@ -152,13 +152,13 @@ class MeetupController {
 
     if (meetup.user_id !== user_id) {
       return res.status(401).json({
-        error: 'Not authorized.',
+        error: 'Usuario não autorizado a deleta o MeetUp.',
       });
     }
 
     if (meetup.past) {
       return res.status(400).json({
-        error: "Can't delete past meetups.",
+        error: 'Não pode deletar meetups que já ocorreram',
       });
     }
 
