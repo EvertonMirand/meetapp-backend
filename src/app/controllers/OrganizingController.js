@@ -5,19 +5,23 @@ import File from '../models/File';
 class OrganizingController {
   async index(req, res) {
     const page = req.query.page || 1;
-    const meetups = await Meetup.findAll({
+    const { rows: meetups, count } = await Meetup.findAndCountAll({
       where: {
         user_id: req.userId,
       },
       include: [File],
       limit: 10,
       offset: (page - 1) * 10,
-    }).map(meetup => {
+    });
+
+    const meetupsMapped = meetups.map(meetup => {
       meetup.past = isBefore(parseISO(meetup.date), new Date());
       return meetup;
     });
 
-    return res.json(meetups.sort((a, b) => compareAsc(a.date, b.date)));
+    res.set('x-total-page', Math.ceil(count / 10));
+
+    return res.json(meetupsMapped.sort((a, b) => compareAsc(a.date, b.date)));
   }
 }
 
