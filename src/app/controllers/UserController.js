@@ -16,7 +16,9 @@ class UserController {
     });
 
     if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ error: 'Validation fails' });
+      return res
+        .status(400)
+        .json({ error: 'Erro ao validar dados, verifique novamente.' });
     }
 
     const userExistis = await User.findOne({
@@ -26,7 +28,7 @@ class UserController {
     });
 
     if (userExistis) {
-      return res.status(400).json({ error: 'User already exists.' });
+      return res.status(400).json({ error: 'Usuario já existe.' });
     }
 
     const user = await User.create(req.body);
@@ -54,7 +56,9 @@ class UserController {
     });
 
     if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ error: 'Validation fails' });
+      return res
+        .status(400)
+        .json({ error: 'Erro ao validar dados, verifique novamente.' });
     }
 
     const { email, oldPassword } = req.body;
@@ -69,12 +73,12 @@ class UserController {
       });
 
       if (userExistis) {
-        return res.status(400).json({ error: 'User already exists.' });
+        return res.status(400).json({ error: 'Usuario já existe' });
       }
     }
 
     if (oldPassword && !(await user.checkPassword(oldPassword))) {
-      return res.status(401).json({ error: 'Password does not match' });
+      return res.status(401).json({ error: 'Senha não confere.' });
     }
 
     const { id, name, provider } = await user.update(req.body);
