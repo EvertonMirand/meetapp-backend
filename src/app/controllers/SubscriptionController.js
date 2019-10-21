@@ -49,13 +49,13 @@ class SubscriptionController {
 
     if (meetup.user_id === req.userId) {
       return res.status(400).json({
-        error: "Can't subscribe to you own meetups",
+        error: 'Não pode se inscrever para o Meetup que você mesmo criou.',
       });
     }
 
     if (meetup.past) {
       return res.status(400).json({
-        error: "Can't subscribe to past meetups",
+        error: 'Não pode se inscrever para Meetups que já ocorreram.',
       });
     }
 
@@ -76,7 +76,8 @@ class SubscriptionController {
 
     if (checkDate) {
       return res.status(400).json({
-        error: "Can't subscribe to two meetups at the same time",
+        error:
+          'Não pode se inscrever para dois Meetups que ocorrem no mesmo momento',
       });
     }
 
@@ -104,20 +105,20 @@ class SubscriptionController {
 
     if (subscription.user_id !== user_id) {
       return res.status(401).json({
-        error: 'Not authorized.',
+        error: 'Usuario não tem autorização para deletar Meetup',
       });
     }
 
     if (meetup.past) {
       return res.status(400).json({
-        error: "Can't delete subscription of past meetups.",
+        error: 'Não pode deletar inscrição de Meetup que já ocorreu',
       });
     }
 
     await subscription.destroy();
 
     return res.send({
-      message: 'Unsubscribe successfully',
+      message: 'Desinscrito com sucesso.',
     });
   }
 }
