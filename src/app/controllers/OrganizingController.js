@@ -1,4 +1,4 @@
-import { compareAsc, isBefore, parseISO } from 'date-fns';
+import { isBefore, parseISO } from 'date-fns';
 import Meetup from '../models/Meetup';
 import File from '../models/File';
 
@@ -9,6 +9,7 @@ class OrganizingController {
       where: {
         user_id: req.userId,
       },
+      order: [['date', 'asc']],
       include: [File],
       limit: 10,
       offset: (page - 1) * 10,
@@ -21,7 +22,7 @@ class OrganizingController {
 
     res.set('x-total-page', Math.ceil(count / 10));
 
-    return res.json(meetupsMapped.sort((a, b) => compareAsc(a.date, b.date)));
+    return res.json(meetupsMapped);
   }
 }
 
