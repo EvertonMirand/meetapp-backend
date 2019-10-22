@@ -150,6 +150,12 @@ class MeetupController {
 
     const meetup = await Meetup.findByPk(req.params.id);
 
+    if (!meetup) {
+      return res.status(404).json({
+        error: 'Meetup não encontrado.',
+      });
+    }
+
     if (meetup.user_id !== user_id) {
       return res.status(401).json({
         error: 'Usuario não autorizado a deleta o MeetUp.',
