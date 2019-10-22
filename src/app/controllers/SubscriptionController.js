@@ -16,6 +16,7 @@ class SubscriptionController {
       include: [
         {
           model: Meetup,
+          order: [['date', 'asc']],
           include: [
             User,
             {
