@@ -25,7 +25,17 @@ class App {
 
   middlewares() {
     this.server.use(express.json());
-    this.server.use(cors());
+    this.server.use(
+      cors({
+        exposedHeaders: [
+          'Content-Length',
+          'X-Foo',
+          'X-Bar',
+          'x-total-page',
+          'Date',
+        ],
+      })
+    );
     this.server.use(express.urlencoded({ extended: false }));
     this.server.use(
       '/files',
