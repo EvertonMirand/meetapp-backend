@@ -26,7 +26,7 @@ class Mail {
         viewEngine: exphbs.create({
           layoutsDir: resolve(viewPath, 'layouts'),
           partialsDir: resolve(viewPath, 'partials'),
-          defaultLayout: 'default',
+          defaultLayout: resolve(viewPath, 'subscription'),
           extname: '.hbs',
         }),
         viewPath,
