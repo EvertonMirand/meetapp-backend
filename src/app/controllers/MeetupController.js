@@ -8,9 +8,14 @@ import Subscription from '../models/Subscription';
 
 class MeetupController {
   async index(req, res) {
-    const where = {};
     const page = req.query.page || 1;
     const user = await User.findByPk(req.userId);
+
+    const where = {
+      user_id: {
+        [Op.not]: user.id,
+      },
+    };
 
     if (req.query.date) {
       const searchDate = parseISO(req.query.date);
@@ -35,7 +40,7 @@ class MeetupController {
     });
 
     const mapMeetup = async meetup => {
-      const checkDate = await Subscription.findOne({
+      const checkSubscribed = await Subscription.findOne({
         where: {
           user_id: user.id,
         },
@@ -52,7 +57,7 @@ class MeetupController {
 
       return {
         ...meetup.toJSON(),
-        canSubscribe: !checkDate,
+        canSubscribe: !checkSubscribed,
       };
     };
 
