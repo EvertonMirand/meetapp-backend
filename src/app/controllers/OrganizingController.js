@@ -1,4 +1,5 @@
-import { isBefore, parseISO } from 'date-fns';
+import { isBefore, parseISO, isPast } from 'date-fns';
+import { Op } from 'sequelize';
 import Meetup from '../models/Meetup';
 import File from '../models/File';
 
@@ -8,6 +9,9 @@ class OrganizingController {
     const { rows: meetups, count } = await Meetup.findAndCountAll({
       where: {
         user_id: req.userId,
+        date: {
+          [Op.gt]: new Date(),
+        },
       },
       order: [['date', 'asc']],
       include: [File],
