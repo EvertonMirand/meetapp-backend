@@ -1,4 +1,4 @@
-import { isBefore, parseISO, isPast } from 'date-fns';
+import { isBefore, parseISO } from 'date-fns';
 import { Op } from 'sequelize';
 import Meetup from '../models/Meetup';
 import File from '../models/File';
